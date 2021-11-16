@@ -3,10 +3,19 @@ import pandas as pd
 import random
 from datetime import datetime, timedelta
 
-songs_dict = pd.read_csv('song_list.csv', header=None, index_col=0, squeeze=True).to_dict()
-for k, v in songs_dict.items():
-    t = datetime.strptime(v, '%M:%S')
-    songs_dict[k] = timedelta(minutes=t.minute, seconds=t.second)
+
+@st.cache(ttl=3600)
+def get_song_list() -> dict:
+    """
+    Read song_list.csv
+    Generate timedelta for dict values
+    :return: songs as dict
+    """
+    songs = pd.read_csv('song_list.csv', header=None, index_col=0, squeeze=True).to_dict()
+    for k, v in songs.items():
+        t = datetime.strptime(v, '%M:%S')
+        songs[k] = timedelta(minutes=t.minute, seconds=t.second)
+    return songs
 
 
 def get_total_time(generated_setlist: list, available_songs: dict) -> timedelta:
@@ -21,12 +30,12 @@ def get_total_time(generated_setlist: list, available_songs: dict) -> timedelta:
 
 st.title('BAND-MAID')
 st.header('Random Setlist Generator')
-
+songs_dict = get_song_list()
 with st.form('song_input_form'):
     serving_songs = st.number_input('Number of songs', min_value=1, max_value=len(songs_dict))
     song_sub = st.form_submit_button('OK')
     if song_sub:
-        setlist = random.sample(songs_dict.keys(), serving_songs)
+        setlist = random.sample(list(songs_dict.keys()), serving_songs)
         total_time = get_total_time(setlist, songs_dict)
         col1, col2, col3 = st.columns(3)
         with col2:
