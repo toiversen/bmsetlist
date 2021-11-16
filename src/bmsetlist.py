@@ -3,15 +3,21 @@ import pandas as pd
 import random
 from datetime import datetime, timedelta
 
-
 songs_dict = pd.read_csv('song_list.csv', header=None, index_col=0, squeeze=True).to_dict()
 for k, v in songs_dict.items():
     t = datetime.strptime(v, '%M:%S')
     songs_dict[k] = timedelta(minutes=t.minute, seconds=t.second)
 
-def get_total_time(setlist, songs_dict):
+
+def get_total_time(setlist: list, songs_dict: dict) -> timedelta:
+    """
+    :param setlist: Randomly chosen songs
+    :param songs_dict: All songs dict with durations
+    :return: Total setlist duration
+    """
     play_times = [songs_dict[k] for k in setlist]
     return sum(play_times, start=timedelta(0))
+
 
 st.title('BAND-MAID')
 st.header('Random Setlist Generator')
