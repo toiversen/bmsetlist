@@ -9,13 +9,13 @@ for k, v in songs_dict.items():
     songs_dict[k] = timedelta(minutes=t.minute, seconds=t.second)
 
 
-def get_total_time(setlist: list, songs_dict: dict) -> timedelta:
+def get_total_time(generated_setlist: list, available_songs: dict) -> timedelta:
     """
-    :param setlist: Randomly chosen songs
-    :param songs_dict: All songs dict with durations
+    :param generated_setlist: Randomly chosen songs
+    :param available_songs: All songs dict with durations
     :return: Total setlist duration
     """
-    play_times = [songs_dict[k] for k in setlist]
+    play_times = [available_songs[song] for song in generated_setlist]
     return sum(play_times, start=timedelta(0))
 
 
