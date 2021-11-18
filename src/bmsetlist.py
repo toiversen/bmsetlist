@@ -4,7 +4,7 @@ import random
 from datetime import datetime, timedelta
 
 
-@st.cache(ttl=3600)
+@st.cache(ttl=3600, allow_output_mutation=True)
 def get_song_list() -> dict:
     """
     Read song_list.csv
@@ -25,6 +25,8 @@ def get_total_time(generated_setlist: list, available_songs: dict) -> timedelta:
     :return: Total setlist duration
     """
     play_times = [available_songs[song] for song in generated_setlist]
+    play_times.append(timedelta(minutes=6))  # Omajinai Time
+    play_times.append(timedelta(minutes=2))  # Maid Waltz
     return sum(play_times, start=timedelta(0))
 
 
@@ -39,6 +41,9 @@ with st.form('song_input_form'):
         total_time = get_total_time(setlist, songs_dict)
         col1, col2, col3 = st.columns(3)
         with col2:
+            setlist.insert(0, "Maid Waltz")  # Always start with Maid Waltz
+            ot = random.randint(1, len(setlist))
+            setlist.insert(ot, "Omajinai Time")  # Insert Omajinai Time
             for i in setlist:
                 st.text(i)
             st.text('----------')
