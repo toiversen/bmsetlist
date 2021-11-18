@@ -1,7 +1,10 @@
+import os
+
 import streamlit as st
 import pandas as pd
 import random
 from datetime import datetime, timedelta
+from pathlib import Path
 
 
 @st.cache(ttl=3600, allow_output_mutation=True)
@@ -11,6 +14,8 @@ def get_song_list() -> dict:
     Generate timedelta for dict values
     :return: songs as dict
     """
+    path_to_script = Path(__file__).parent.absolute()
+    os.chdir(path_to_script)
     songs = pd.read_csv('song_list.csv', header=None, index_col=0, squeeze=True).to_dict()
     for k, v in songs.items():
         t = datetime.strptime(v, '%M:%S')
