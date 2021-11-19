@@ -1,26 +1,7 @@
-import os
-
 import streamlit as st
-import pandas as pd
 import random
-from datetime import datetime, timedelta
-from pathlib import Path
-
-
-@st.cache(ttl=3600, allow_output_mutation=True)
-def get_song_list() -> dict:
-    """
-    Read song_list.csv
-    Generate timedelta for dict values
-    :return: songs as dict
-    """
-    path_to_script = Path(__file__).parent.absolute()
-    os.chdir(path_to_script)
-    songs = pd.read_csv('song_list.csv', header=None, index_col=0, squeeze=True).to_dict()
-    for k, v in songs.items():
-        t = datetime.strptime(v, '%M:%S')
-        songs[k] = timedelta(minutes=t.minute, seconds=t.second)
-    return songs
+from datetime import timedelta
+from songs import song_list
 
 
 def get_total_time(generated_setlist: list, available_songs: dict) -> timedelta:
@@ -37,13 +18,12 @@ def get_total_time(generated_setlist: list, available_songs: dict) -> timedelta:
 
 st.title('BAND-MAID')
 st.header('Random Setlist Generator')
-songs_dict = get_song_list()
 with st.form('song_input_form'):
-    serving_songs = st.number_input('Number of songs', min_value=1, max_value=len(songs_dict))
+    serving_songs = st.number_input('Number of songs', min_value=1, max_value=len(song_list))
     song_sub = st.form_submit_button('OK')
     if song_sub:
-        setlist = random.sample(list(songs_dict.keys()), serving_songs)
-        total_time = get_total_time(setlist, songs_dict)
+        setlist = random.sample(list(song_list.keys()), serving_songs)
+        total_time = get_total_time(setlist, song_list)
         col1, col2, col3 = st.columns(3)
         with col2:
             setlist.insert(0, "Maid Waltz")  # Always start with Maid Waltz
