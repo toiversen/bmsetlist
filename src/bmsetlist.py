@@ -20,14 +20,14 @@ st.title('BAND-MAID')
 st.header('Random Setlist Generator')
 with st.form('song_input_form'):
     serving_songs = st.number_input('Number of songs', min_value=1, max_value=len(song_list))
-    song_sub = st.form_submit_button('OK')
+    song_sub = st.form_submit_button('PO')
     if song_sub:
         setlist = random.sample(list(song_list.keys()), serving_songs)
         total_time = get_total_time(setlist, song_list)
         col1, col2, col3 = st.columns(3)
-        with col2:
+        with col2:  # Center on screen
             setlist.insert(0, "Maid Waltz")  # Always start with Maid Waltz
-            ot = random.randint(1, len(setlist))
+            ot = random.randint(1, len(setlist))  # Random spot for Omajinai Time
             setlist.insert(ot, "Omajinai Time")  # Insert Omajinai Time
             for i in setlist:
                 st.text(i)
